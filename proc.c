@@ -224,13 +224,13 @@ fork(void)
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
 // until its parent calls wait() to find out it exited.
-void
-exit(void)
+int
+exit(int exitstatus)
 {
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
-
+  curproc->estatus = exitstatus;
   if(curproc == initproc)
     panic("init exiting");
 
