@@ -16,15 +16,37 @@ sys_fork(void)
 int
 sys_exit(void)
 {
-  exit(0);
-  return 0;  // not reached
+ int pid; 
+  if(argint(0, &pid) < 0){
+	return -1;
+  }
+  return exit(pid);  //
 }
 
 int
 sys_wait(void)
 {
-  return wait(0);
+  int status;
+  if(argint(0, &status) < 0)
+	return -1;
+  return wait((int*)status); //wait (int*) because wait takes in a pointer, you need to c type_cast it.
 }
+
+int sys_waitpid(void){
+ int pid, options, status;
+ if(argint(0, &pid) < 0)	//this function call is found in syscall.c
+	return -1;
+ if(argint(1,&status) < 0){    //normally 
+	return -1;
+} 
+ if(argint(2,&options) < 0){
+	return -1;
+}
+return waitpid(pid, (int*)status, options);
+
+
+}
+
 
 int
 sys_kill(void)
@@ -33,7 +55,7 @@ sys_kill(void)
 
   if(argint(0, &pid) < 0)
     return -1;
-  return kill(pid);
+  return kill(pid); //kill(int)
 }
 
 int

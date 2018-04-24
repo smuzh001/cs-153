@@ -286,7 +286,7 @@ wait(int *status)
       havekids = 1;
       if(p->state == ZOMBIE){
 	if (status != 0) {
-	  status = &(p->estatus);
+	 *status = (p->estatus);
 	}
         // Found one.
         pid = p->pid;
@@ -313,6 +313,49 @@ wait(int *status)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
+
+int waitpid(int pid, int* status, int options){
+
+ int pidfound = 0;
+ struct proc *p;
+// int  pid;
+ struct proc *curproc = myproc();
+
+ acquire(&ptable.lock);
+ for(;;){
+    //Scan through table looking for the process with the passed in pid, if found set pidfound = 1.	
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+	if(p->pid == pid){
+	pidfound = 1;	
+//	   continue;
+	}
+	if(p->state == ZOMBIE){
+		if(status != 0){ //we check if the status isnt null if thats not the case we get the exit status of the passed in pid 
+		 *status = p->estatus;
+		}
+		pid = p->pid;
+		kfree(p->kstack);
+		p->kstack = 0;
+		freevm(p->pgdir);
+		p->pid = 0;
+		p->parent = 0;
+		p->name[0] = 0;
+		p->killed = 0;
+		p->state = UNUSED;
+		release(&ptable.lock);
+		return pid;	
+	}	}	
+    }
+
+    //if no children then return -1. 
+    if(!pidfound){
+	release(&ptable.lock);
+	return -1;
+    }
+    sleep(curproc, &ptable.lock);	
+}
+
+
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
