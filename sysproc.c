@@ -20,7 +20,8 @@ sys_exit(void)
   if(argint(0, &pid) < 0){
 	return -1;
   }
-  return exit(pid);  //
+  exit(pid);
+  return 0;  //
 }
 
 int
@@ -34,8 +35,9 @@ sys_wait(void)
 
 int sys_waitpid(void){
  int pid, options, status;
- if(argint(0, &pid) < 0)	//this function call is found in syscall.c
+ if(argint(0, &pid) < 0){	//this function call is found in syscall.c
 	return -1;
+}
  if(argint(1,&status) < 0){    //normally 
 	return -1;
 } 
