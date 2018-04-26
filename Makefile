@@ -158,7 +158,6 @@ mkfs: mkfs.c fs.h
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
 
-#cs153 removed _usertest\
 
 UPROGS=\
 	_cat\
@@ -173,7 +172,7 @@ UPROGS=\
 	_rm\
 	_sh\
 	_stressfs\
-    _lab1_test\
+	_lab1_test\
 	_wc\
 	_zombie\
 
